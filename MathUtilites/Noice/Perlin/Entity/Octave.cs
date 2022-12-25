@@ -148,7 +148,7 @@
                 for (int X = x * BigElementsPerSmall; X < (x + 1) * BigElementsPerSmall; X++)
                 {
                     var bigOctaveValue = biger[X];
-                    result[X] = BaseMath.Average(smallOctaveValue, bigOctaveValue);
+                    result[X] = Statistic.Average(smallOctaveValue, bigOctaveValue);
                 }
             }
 
@@ -158,7 +158,7 @@
             {
                 var bigOctaveValue = biger[x];
 
-                result[x] = BaseMath.Average(lastOctaveValue, bigOctaveValue);
+                result[x] = Statistic.Average(lastOctaveValue, bigOctaveValue);
             }
 
             return result;
