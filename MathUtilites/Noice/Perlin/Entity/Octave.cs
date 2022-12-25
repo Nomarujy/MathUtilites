@@ -82,9 +82,9 @@
         {
             var BigElementsPerSmall = biger.Length / smaller.Length;
 
-            var result = new double[BigElementsPerSmall][][];
+            var result = new double[biger.Length][][];
 
-            Parallel.For(0, smaller.Length, (z) =>
+            for (int z = 0; z < smaller.Length; z++)
             {
                 for (int Z = z * BigElementsPerSmall; Z < (z + 1) * BigElementsPerSmall; Z++)
                 {
@@ -93,7 +93,7 @@
 
                     result[Z] = AverageForYDimension(ySmallDimension, yBigDimension);
                 }
-            });
+            }
 
             var lastOctaveValue = smaller[^1];
 

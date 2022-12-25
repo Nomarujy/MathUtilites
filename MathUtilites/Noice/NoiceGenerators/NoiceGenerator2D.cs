@@ -1,9 +1,7 @@
 ﻿using MathUtilites.Interpolation;
 using MathUtilites.Noice.Perlin.Entity;
-using MathUtilites.Noice.Perlin.Options;
-using MathUtilites.Utilites;
 
-namespace MathUtilites.Noice.Perlin.NoiceGenerators
+namespace MathUtilites.Noice.NoiceGenerators
 {
     internal class NoiceGenerator2D
     {

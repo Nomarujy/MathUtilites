@@ -1,4 +1,4 @@
-﻿namespace MathUtilites.Noice.Perlin.Options
+﻿namespace MathUtilites.Noice.Perlin
 {
     public class PerlinNoiceOptions
     {

@@ -1,6 +1,4 @@
-﻿using MathUtilites.Interpolation;
-
-namespace MathUtilites.Utilites
+﻿namespace MathUtilites.Interpolation
 {
     public static class SmothStep
     {

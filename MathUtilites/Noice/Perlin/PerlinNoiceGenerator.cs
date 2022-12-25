@@ -1,6 +1,5 @@
-﻿using MathUtilites.Noice.Perlin.Entity;
-using MathUtilites.Noice.Perlin.NoiceGenerators;
-using MathUtilites.Noice.Perlin.Options;
+﻿using MathUtilites.Noice.NoiceGenerators;
+using MathUtilites.Noice.Perlin.Entity;
 
 namespace MathUtilites.Noice.Perlin
 {
@@ -18,11 +17,9 @@ namespace MathUtilites.Noice.Perlin
         public double[] Generate1D(int seed)
         {
             Random random = new(seed);
-
             NoiceGenerator1D generator = new(NoiceGeneratorOptions);
 
             Octave result = generator.Generate(random.Next());
-
             result = IncreaseReesolution(result,
                 () => generator.Generate(random.Next()));
 
@@ -32,13 +29,25 @@ namespace MathUtilites.Noice.Perlin
         public double[][] Generate2D(int seed)
         {
             Random random = new(seed);
-
             NoiceGenerator2D generator = new(NoiceGeneratorOptions);
-            Octave result = generator.Generate(random.Next());
 
-            result = IncreaseReesolution(result, () => generator.Generate(random.Next()));
+            Octave result = generator.Generate(random.Next());
+            result = IncreaseReesolution(result, 
+                () => generator.Generate(random.Next()));
 
             return result.Noice[0];
+        }
+
+        public double[][][] Generate3D(int seed)
+        {
+            Random random = new(seed);
+            NoiceGenerator3D generator = new(NoiceGeneratorOptions);
+
+            Octave result = generator.Generate(random.Next());
+            result = IncreaseReesolution(result, 
+                () => generator.Generate(random.Next()));
+
+            return result.Noice;
         }
 
         private Octave IncreaseReesolution(Octave octave, Func<Octave> generator)
