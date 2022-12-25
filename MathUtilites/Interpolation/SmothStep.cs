@@ -14,8 +14,8 @@
         public static double Find(double firstIndex, double secondIndex, double indexBetween)
             => (double)Find((decimal)firstIndex, (decimal)secondIndex, (decimal)indexBetween);
 
-        public static float Find(float firstIndex, float secondIndex, float indexBetween)
-            => (float)Find((decimal)firstIndex, (decimal)secondIndex, (decimal)indexBetween);
+        public static double Find(float firstIndex, float secondIndex, float indexBetween)
+            => (double)Find((decimal)firstIndex, (decimal)secondIndex, (decimal)indexBetween);
 
         public static double Find(int firstIndex, int secondIndex, int indexBetween)
             => (double)Find(firstIndex, secondIndex, (decimal)indexBetween);
