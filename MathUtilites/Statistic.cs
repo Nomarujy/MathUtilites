@@ -73,5 +73,48 @@
         }
 
         #endregion Median
+
+        #region Percentile
+
+        public static decimal Percentile(decimal[] values, decimal percent)
+        {
+            if (percent > 1 || percent < 0) throw new ArgumentOutOfRangeException(nameof(percent), "Percent Out of 0 and 1");
+
+            int requiredElement = (int)Math.Round(percent * values.Length);
+
+            // Translate to array Index
+            if (requiredElement > 0)
+            {
+                requiredElement--;
+            }
+
+            return values
+                .OrderBy(x=>x)
+                .Skip(requiredElement)
+                .First();
+        }
+
+        public static double Percentile(double[] values, double percent)
+        {
+            var array = ConvertArray(values);
+
+            return (double)Percentile(array, (decimal)percent);
+        }
+
+        public static double Percentile(float[] values, float percent)
+        {
+            var array = ConvertArray(values);
+
+            return (double)Percentile(array, (decimal)percent);
+        }
+
+        public static double Percentile(int[] values, float percent)
+        {
+            var array = ConvertArray(values);
+
+            return (double)Percentile(array, (decimal)percent);
+        }
+
+        #endregion Percentile
     }
 }
