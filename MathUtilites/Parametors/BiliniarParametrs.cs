@@ -1,4 +1,4 @@
-﻿namespace MathUtilites.Interpolation
+﻿namespace MathUtilites.Parametors
 {
     public class BiliniarParametrs
     {
@@ -15,7 +15,7 @@
             get { return _stepX; }
             set
             {
-                _stepX = Step.Find(0, 1, value);
+                _stepX = ValueAtRange(value);
             }
         }
 
@@ -25,8 +25,16 @@
             get { return _stepY; }
             set
             {
-                _stepY = Step.Find(0, 1, value);
+                _stepY = ValueAtRange(value);
             }
+        }
+
+        private decimal ValueAtRange(decimal value, decimal min = 0, decimal max = 1)
+        {
+            if (value < min) return min;
+            if (value > max) return max;
+
+            return value;
         }
     }
 }

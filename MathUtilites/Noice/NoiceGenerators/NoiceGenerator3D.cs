@@ -1,5 +1,4 @@
-﻿using MathUtilites.Interpolation;
-using MathUtilites.Noice.Perlin.Entity;
+﻿using MathUtilites.Noice.Perlin.Entity;
 
 namespace MathUtilites.Noice.NoiceGenerators
 {
@@ -79,9 +78,9 @@ namespace MathUtilites.Noice.NoiceGenerators
 
                 for (int i = leftIndex + 1; i < rightIndex; i++)
                 {
-                    var smothStep = SmothStep.Find(leftIndex, z, i);
+                    var smothStep = StepFinder.Step(leftIndex, z, i);
 
-                    noice[i][y][x] = Liniar.Interpolate(leftValue, rightValue, smothStep);
+                    noice[i][y][x] = Interpolation.Liniar(leftValue, rightValue, smothStep);
                 }
             }
         }
