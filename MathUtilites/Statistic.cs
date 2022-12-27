@@ -19,14 +19,6 @@
 
         #endregion Average
 
-        private static decimal[] ConvertArray<T>(T[] values)
-        {
-            decimal[] array = new decimal[values.Length];
-            values.CopyTo(array, 0);
-
-            return array;
-        }
-
         #region Median
 
         public static decimal Median(decimal[] values)
@@ -35,44 +27,61 @@
             var skip = count / 2;
 
             IOrderedEnumerable<decimal> orderedArray = values.OrderBy(x => x);
+            decimal result;
 
             if (skip % 2 == 0)
             {
-                orderedArray = (IOrderedEnumerable<decimal>)orderedArray
+                result = orderedArray
                     .Skip(skip - 1)
-                    .Take(2);
+                    .Take(2).Average();
             }
             else
             {
-                orderedArray = (IOrderedEnumerable<decimal>)orderedArray
+                result = orderedArray
                     .Skip(skip)
-                    .Take(1);
+                    .Take(1)
+                    .Average();
             }
-            return orderedArray.Average();
+            return result;
         }
 
         public static double Median(double[] values)
         {
-            var array = ConvertArray(values);
+            var array = ConvertDoubleToDecimal(values);
 
             return (double)Median(array);
         }
 
         public static double Median(float[] values)
         {
-            var array = ConvertArray(values);
+            var array = ConvertFloatToDecimal(values);
 
             return (double)Median(array);
         }
 
         public static double Median(int[] values)
         {
-            var array = ConvertArray(values);
+            var array = ConvertIntToDecimal(values);
 
             return (double)Median(array);
         }
 
         #endregion Median
+
+        private static decimal[] ConvertDoubleToDecimal(double[] values)
+        {
+            return Array.ConvertAll(values, x => (decimal)x);
+        }
+
+        private static decimal[] ConvertFloatToDecimal(float[] values)
+        {
+            return Array.ConvertAll(values, x => (decimal)x);
+        }
+
+        private static decimal[] ConvertIntToDecimal(int[] values)
+        {
+            return Array.ConvertAll(values, x => (decimal)x);
+        }
 
         #region Percentile
 
@@ -96,21 +105,21 @@
 
         public static double Percentile(double[] values, double percent)
         {
-            var array = ConvertArray(values);
+            decimal[] array = ConvertDoubleToDecimal(values);
 
             return (double)Percentile(array, (decimal)percent);
         }
 
         public static double Percentile(float[] values, float percent)
         {
-            var array = ConvertArray(values);
+            var array = ConvertFloatToDecimal(values);
 
             return (double)Percentile(array, (decimal)percent);
         }
 
         public static double Percentile(int[] values, float percent)
         {
-            var array = ConvertArray(values);
+            var array = ConvertIntToDecimal(values);
 
             return (double)Percentile(array, (decimal)percent);
         }

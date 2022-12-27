@@ -18,7 +18,7 @@ namespace MathUtilites
         public static double Liniar(float leftValue, float rightValue, float step)
            => (double)Liniar((decimal)leftValue, (decimal)rightValue, (decimal)step);
 
-        public static double Liniar(int leftValue, int rightValue, int step)
+        public static double Liniar(int leftValue, int rightValue, double step)
            => (double)Liniar(leftValue, rightValue, (decimal)step);
 
         #endregion Liniar
