@@ -1,6 +1,6 @@
 ﻿namespace MathUtilites.Noice.Perlin.Entity
 {
-    internal class Octave
+    public class Octave
     {
         public Octave(double[] noice)
         {

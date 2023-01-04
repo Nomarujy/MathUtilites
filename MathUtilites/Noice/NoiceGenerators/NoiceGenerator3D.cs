@@ -1,11 +1,14 @@
 ﻿using MathUtilites.Noice.Perlin.Entity;
+using MathUtilites.Parametors;
 
 namespace MathUtilites.Noice.NoiceGenerators
 {
-    internal class NoiceGenerator3D
+    public class NoiceGenerator3D
     {
         private readonly NoiceGeneratorOptions _options;
         private readonly NoiceGenerator2D _generator;
+
+        private int GenerationInterval { get; set; }
 
         public NoiceGenerator3D(NoiceGeneratorOptions options)
         {
@@ -15,73 +18,106 @@ namespace MathUtilites.Noice.NoiceGenerators
 
         public Octave Generate(int seed)
         {
-            double[][][] noice = new double[_options.ArraySize][][];
+            return GenerateOctave(seed, Generate2D, FindDepthsForRow);
+        }
 
-            GenerateBasePlates(seed, noice);
-            InitArray(noice);
-            InterpolateDepth(noice);
+        public Octave GenerateParalel(int seed)
+        {
+            return GenerateOctave(seed, Generate2DParalel, FindDepthsForRowParalel);
+        }
+
+        private Octave GenerateOctave(int seed, Func<int, double[][]> generate2D, Action<int, double[][][]> findDepthsForRow)
+        {
+            double[][][] noice = new double[_options.ArraySize][][];
+            GenerationInterval = _options.InterpolatedValuesPerGenerated + 1;
+
+            GenerateBasePlates(seed, noice, generate2D);
+            InitNullArray(noice);
+            GenerateInterpolatedValues(noice, findDepthsForRow);
 
             return new Octave(noice);
         }
 
-        private void GenerateBasePlates(int seed, double[][][] noice)
+        private void GenerateBasePlates(int seed, double[][][] noice, Func<int, double[][]> generate2D)
         {
             Random random = new(seed);
-            var step = _options.InterpolatedValuesPerGenerated + 1;
 
-
-            for (int z = 0; z < _options.ArraySize; z += step)
+            for (int z = 0; z < _options.ArraySize; z += GenerationInterval)
             {
-                noice[z] = _generator.Generate(random.Next()).Noice[0];
+                noice[z] = generate2D.Invoke(random.Next());
             }
         }
 
-        private void InitArray(double[][][] array)
+        private double[][] Generate2D(int seed)
+        {
+            return _generator.Generate(seed).Noice[0];
+        }
+
+        private double[][] Generate2DParalel(int seed)
+        {
+            return _generator.GenerateParalel(seed).Noice[0];
+        }
+
+        private void InitNullArray(double[][][] array)
         {
             for (int z = 0; z < _options.ArraySize; z++)
             {
                 if (array[z] is null)
                 {
                     array[z] = new double[array.Length][];
-                    InitArray(array[z]);
+
+                    for (int y = 0; y < _options.ArraySize; y++)
+                    {
+                        array[z][y] = new double[_options.ArraySize];
+                    }
                 }
             }
         }
 
-        private void InitArray(double[][] array)
+        private void GenerateInterpolatedValues(double[][][] noice, Action<int, double[][][]> findDepthsForRow)
         {
             for (int y = 0; y < _options.ArraySize; y++)
             {
-                array[y] = new double[_options.ArraySize];
+                findDepthsForRow.Invoke(y, noice);
             }
         }
 
-        private void InterpolateDepth(double[][][] noice)
+        private void FindDepthsForRow(int y, double[][][] noice)
         {
-            for (int y = 0; y < _options.ArraySize; y++)
+            for (int x = 0; x < _options.ArraySize; x++)
             {
-                Parallel.For(0, _options.ArraySize, (x) => Interpolate(x, y, noice));
+                InterpolateDepth(x, y, noice);
             }
         }
 
-        private void Interpolate(int x, int y, double[][][] noice)
+        private void FindDepthsForRowParalel(int y, double[][][] noice)
         {
-            var step = _options.InterpolatedValuesPerGenerated + 1;
+            Parallel.For(0, _options.ArraySize,
+                x => InterpolateDepth(x, y, noice));
+        }
 
-            for (int z = step; z < _options.ArraySize; z++)
+        private void InterpolateDepth(int x, int y, double[][][] noice)
+        {
+            for (int topIndex = GenerationInterval; topIndex < _options.ArraySize; topIndex += GenerationInterval)
             {
-                var leftIndex = z - step;
-                var rightIndex = z;
+                var bottomIndex = topIndex - GenerationInterval;
 
-                var leftValue = noice[leftIndex][y][x];
-                var rightValue = noice[rightIndex][y][x];
-
-                for (int i = leftIndex + 1; i < rightIndex; i++)
+                InterpolationParametors param = new()
                 {
-                    var smothStep = StepFinder.Step(leftIndex, z, i);
+                    StartIndex = bottomIndex,
+                    EndIndex = topIndex,
+                    StartValue = noice[bottomIndex][y][x],
+                    EndValue = noice[topIndex][y][x]
+                };
+                InterpolateZone(x, y, noice, param);
+            }
+        }
 
-                    noice[i][y][x] = Interpolation.Liniar(leftValue, rightValue, smothStep);
-                }
+        private static void InterpolateZone(int x, int y, double[][][] noice, InterpolationParametors param)
+        {
+            for (int z = param.StartIndex + 1; z < param.EndIndex; z++)
+            {
+                noice[z][y][x] = Interpolation.Liniar(param, z);
             }
         }
     }

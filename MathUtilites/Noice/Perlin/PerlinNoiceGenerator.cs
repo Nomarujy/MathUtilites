@@ -56,7 +56,7 @@ namespace MathUtilites.Noice.Perlin
 
             for (int i = 1; i < PerlinNoiceOptions.OctaveDepth; i++)
             {
-                NoiceGeneratorOptions.NumbersOfGenerated *= 2;
+                NoiceGeneratorOptions.GeneratedCount *= 2;
 
                 Octave lastOctave = generator.Invoke();
 

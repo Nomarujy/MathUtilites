@@ -3,7 +3,7 @@
     public class NoiceGeneratorOptions
     {
         private int _numbersOfGenerated = 6;
-        public int NumbersOfGenerated
+        public int GeneratedCount
         {
             get { return _numbersOfGenerated; }
             set
@@ -32,7 +32,7 @@
         {
             get
             {
-                return NumbersOfGenerated + (NumbersOfGenerated - 1) * InterpolatedValuesPerGenerated;
+                return GeneratedCount + (GeneratedCount - 1) * InterpolatedValuesPerGenerated;
             }
         }
     }

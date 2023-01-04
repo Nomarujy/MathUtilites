@@ -1,11 +1,14 @@
 ﻿using MathUtilites.Noice.Perlin.Entity;
+using MathUtilites.Parametors;
 
 namespace MathUtilites.Noice.NoiceGenerators
 {
-    internal class NoiceGenerator2D
+    public class NoiceGenerator2D
     {
         private readonly NoiceGeneratorOptions _options;
         private readonly NoiceGenerator1D _generator1D;
+
+        private int GenerationInterval { get; set; }
 
         public NoiceGenerator2D(NoiceGeneratorOptions options)
         {
@@ -15,64 +18,95 @@ namespace MathUtilites.Noice.NoiceGenerators
 
         public Octave Generate(int seed)
         {
+            return GenerateOctave(seed, Generate1D, InterpolateRow);
+        }
+
+        public Octave GenerateParalel(int seed)
+        {
+            return GenerateOctave(seed, Generate1DParalel, InterpolateRowParalel);
+        }
+
+        private Octave GenerateOctave(int seed, Func<int, double[]> generate1D, Action<double[][], int> interpolateRow)
+        {
             double[][] noice = new double[_options.ArraySize][];
+            GenerationInterval = _options.InterpolatedValuesPerGenerated + 1;
 
-            GenerateBaseLines(seed, noice);
+            GenerateRandomLines(seed, noice, generate1D);
             InitNullArrays(noice);
+            GenerateInterpolatedLines(noice, interpolateRow);
 
-            InterpolateVerticalLines(noice);
             return new Octave(noice);
         }
 
-        private void GenerateBaseLines(int seed, double[][] noice)
+        private void GenerateRandomLines(int seed, double[][] noice, Func<int, double[]> generator1D)
         {
             Random random = new(seed);
-            var step = _options.InterpolatedValuesPerGenerated + 1;
 
-            List<Task> tasks = new(_options.ArraySize / step + 1);
-
-            Parallel.For(0, _options.ArraySize, (index) => GenerateLine(ref noice[index], random.Next()));
+            for (int y = 0; y < noice.Length; y+= GenerationInterval)
+            {
+                noice[y] = generator1D.Invoke(random.Next());
+            }
         }
 
-        private void InitNullArrays(double[][] noice)
+        private double[] Generate1D(int seed)
         {
-            for (int i = 0; i < noice.Length; i++)
+            return _generator1D.Generate(seed).Noice[0][0];
+        }
+
+        private double[] Generate1DParalel(int seed)
+        {
+            return _generator1D.GenerateParalel(seed).Noice[0][0];
+        }
+
+        private void InitNullArrays(double[][] array)
+        {
+            for (int i = 0; i < _options.ArraySize; i++)
             {
-                if (noice[i] is null)
+                if (array[i] is null)
                 {
-                    noice[i] = new double[_options.ArraySize];
+                    array[i] = new double[_options.ArraySize];
                 }
             }
         }
 
-        private void GenerateLine(ref double[] noice, int seed)
+        private void GenerateInterpolatedLines(double[][] noice, Action<double[][], int> interpolateRow)
         {
-            noice = _generator1D.Generate(seed).Noice[0][0];
-        }
-
-        private void InterpolateVerticalLines(double[][] noice)
-        {
-            Parallel.For(0, _options.ArraySize, (index) => Interpolate(index, noice));
-        }
-
-        private void Interpolate(int x, double[][] noice)
-        {
-            var step = _options.InterpolatedValuesPerGenerated + 1;
-
-            for (int y = step; y < _options.ArraySize; y += step)
+            for (int y = 1; y < noice.Length; y += GenerationInterval)
             {
-                var topIndex = y - step;
-                var bottomIndex = y;
+                interpolateRow.Invoke(noice, y);
+            }
+        }
 
-                var topValue = noice[topIndex][x];
-                var bottomValue = noice[bottomIndex][x];
+        private void InterpolateRow(double[][] noice, int y)
+        {
+            for (int x = 0; x < _options.ArraySize; x++)
+            {
+                InterpolateColumn(noice, x, y);
+            }
+        }
 
-                for (int i = topIndex + 1; i < bottomIndex; i++)
-                {
-                    var smothStep = StepFinder.Step(topIndex, bottomIndex, i);
+        private void InterpolateRowParalel(double[][] noice, int y)
+        {
+            Parallel.For(0, _options.ArraySize,
+                x => InterpolateColumn(noice, x, y));
+        }
 
-                    noice[i][x] = Interpolation.Liniar(topValue, bottomValue, smothStep);
-                }
+        private void InterpolateColumn(double[][] noice, int x, int y)
+        {
+            var startY = y - 1;
+            var endY = startY + GenerationInterval;
+
+            InterpolationParametors param = new()
+            {
+                StartIndex = startY,
+                EndIndex = endY,
+                StartValue = noice[startY][x],
+                EndValue = noice[endY][x],
+            };
+
+            for (int i = y; i < endY; i++)
+            {
+                noice[i][x] = Interpolation.Liniar(param, i);
             }
         }
     }

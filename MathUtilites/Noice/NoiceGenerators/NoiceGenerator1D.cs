@@ -1,10 +1,13 @@
 ﻿using MathUtilites.Noice.Perlin.Entity;
+using MathUtilites.Parametors;
 
 namespace MathUtilites.Noice.NoiceGenerators
 {
-    internal class NoiceGenerator1D
+    public class NoiceGenerator1D
     {
         private readonly NoiceGeneratorOptions _options;
+
+        private int GenerationInterval { get; set; }
 
         public NoiceGenerator1D(NoiceGeneratorOptions options)
         {
@@ -13,10 +16,22 @@ namespace MathUtilites.Noice.NoiceGenerators
 
         public Octave Generate(int seed)
         {
+            return GenerateOctave(seed, GenerateInterpolatedValues);
+        }
+
+        public Octave GenerateParalel(int seed)
+        {
+            return GenerateOctave(seed, GenerateInterpolatedValuesParalel);
+        }
+
+        private Octave GenerateOctave(int seed, Action<double[]> InterpolationGenerator)
+        {
             double[] noice = new double[_options.ArraySize];
 
+            GenerationInterval = _options.InterpolatedValuesPerGenerated + 1;
+
             GenerateRandomValues(seed, noice);
-            InterpolateValues(noice);
+            InterpolationGenerator.Invoke(noice);
 
             return new(noice);
         }
@@ -25,33 +40,42 @@ namespace MathUtilites.Noice.NoiceGenerators
         {
             Random random = new(seed);
 
-            var step = _options.InterpolatedValuesPerGenerated + 1;
-
-            for (int i = 0; i < noice.Length; i += step)
+            for (int i = 0; i < noice.Length; i += GenerationInterval)
             {
                 noice[i] = random.NextDouble();
             }
         }
 
-        private void InterpolateValues(double[] noice)
+        private void GenerateInterpolatedValues(double[] noice)
         {
-            var step = _options.InterpolatedValuesPerGenerated + 1;
-
-            for (int secondIndex = step; secondIndex < noice.Length; secondIndex += step)
+            for (int i = 0; i < _options.GeneratedCount; i++)
             {
-                var firstIndex = secondIndex - step;
-
-                var firstValue = noice[firstIndex];
-                var secondValue = noice[secondIndex];
-
-                for (int i = firstIndex + 1; i < secondIndex; i++)
-                {
-                    var smothStep = (double)StepFinder.Step(firstIndex, secondIndex, i);
-
-                    noice[i] = Interpolation.Liniar(firstValue, secondValue, smothStep);
-                }
+                InterpolateZone(i, noice);
             }
+        }
+        private void GenerateInterpolatedValuesParalel(double[] noice)
+        {
+            Parallel.For(0, _options.GeneratedCount, 
+                i => InterpolateZone(i, noice));
+        }
 
+        private void InterpolateZone(int generatedIndex, double[] noice)
+        {
+            var startIndex = generatedIndex * GenerationInterval;
+            var endIndex = startIndex + GenerationInterval;
+
+            InterpolationParametors param = new()
+            {
+                StartIndex = startIndex,
+                EndIndex = endIndex,
+                StartValue = noice[startIndex],
+                EndValue = noice[endIndex],
+            };
+
+            for (int x = param.StartIndex + 1; x < param.EndIndex; x++)
+            {
+                noice[x] = Interpolation.Liniar(param, x);
+            }
         }
     }
 }
