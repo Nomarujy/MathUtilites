@@ -1,6 +1,6 @@
 ﻿namespace MathUtilites.Parametors
 {
-    public class BiliniarParametrs
+    public class BiliniarParametors
     {
         public decimal TopLeftValue { get; set; }
         public decimal TopRightValue { get; set; }

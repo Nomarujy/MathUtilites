@@ -43,9 +43,9 @@ namespace MathUtilitesTests
         }
 
         
-       private BiliniarParametrs GetBiliniarParametrs()
+       private BiliniarParametors GetBiliniarParametrs()
         {
-            return new BiliniarParametrs()
+            return new BiliniarParametors()
             {
                 TopLeftValue = 0,
                 TopRightValue = 100,
