@@ -7,19 +7,19 @@ namespace MathUtilites
 
         #region Liniar
 
-        public static decimal Liniar(decimal leftValue, decimal rightValue, decimal step)
+        public static decimal Liniar(decimal startValue, decimal endValue, decimal step)
         {
-            return leftValue + (rightValue - leftValue) * step;
+            return startValue + (endValue - startValue) * step;
         }
 
-        public static double Liniar(double leftValue, double rightValue, double step)
-            => (double)Liniar((decimal)leftValue, (decimal)rightValue, (decimal)step);
+        public static double Liniar(double startValue, double endValue, double step)
+            => (double)Liniar((decimal)startValue, (decimal)endValue, (decimal)step);
 
-        public static double Liniar(float leftValue, float rightValue, float step)
-           => (double)Liniar((decimal)leftValue, (decimal)rightValue, (decimal)step);
+        public static double Liniar(float startValue, float endValue, float step)
+           => (double)Liniar((decimal)startValue, (decimal)endValue, (decimal)step);
 
-        public static double Liniar(int leftValue, int rightValue, double step)
-           => (double)Liniar(leftValue, rightValue, (decimal)step);
+        public static double Liniar(int startValue, int endValue, double step)
+           => (double)Liniar(startValue, endValue, (decimal)step);
 
         #endregion Liniar
 
