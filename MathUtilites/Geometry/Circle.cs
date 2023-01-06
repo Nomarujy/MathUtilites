@@ -2,16 +2,21 @@
 
 namespace MathUtilites.Geometry
 {
-    public class Circle : IFigure
+    public class Circle : Figure
     {
-        public Vector2D Center { get; private set; }
-        public double Radius { get; private set; }
+        public Vector2D Center { get; set; }
 
-        public Circle(double radius = 1)
+        private double _radius;
+        public double Radius
         {
-            Center = Vector2D.Zero;
-            Radius = radius;
+            get { return _radius; }
+            set
+            {
+                _radius = Math.Abs(value);
+            }
         }
+
+        public Circle(double radius = 1) : this(Vector2D.Zero, radius) { }
 
         public Circle(Vector2D center, double radius)
         {
@@ -19,8 +24,8 @@ namespace MathUtilites.Geometry
             Radius = radius;
         }
 
-        public double Area => Radius * Math.PI * Radius;
-        public double Perimetr => 2 * Math.PI * Radius;
+        public override double Area => Radius * Math.PI * Radius;
+        public override double Perimetr => 2 * Math.PI * Radius;
 
         public Vector2D PointByAnglge(double angle)
         {
