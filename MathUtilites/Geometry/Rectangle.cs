@@ -57,6 +57,7 @@ namespace MathUtilites.Geometry
         {
             Vector2D[] result = new Vector2D[4];
             Circle circle = new(Math.Sqrt(Width * Width + Height * Height));
+            circle.Radius = circle.Radius / 2;
 
             double angle = 45 + Angle;
             for (int i = 0; i < 4; i += 45)
