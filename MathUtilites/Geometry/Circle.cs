@@ -2,7 +2,7 @@
 
 namespace MathUtilites.Geometry
 {
-    public class Circle : Figure
+    public class Circle : IFigure
     {
         public Vector2D Center { get; set; }
 

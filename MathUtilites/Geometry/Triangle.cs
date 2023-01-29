@@ -1,6 +1,6 @@
 ﻿namespace MathUtilites.Geometry
 {
-    public class Triangle : Figure
+    public class Triangle : IFigure
     {
         public Triangle(double a = 0, double b = 0, double c = 0)
         {

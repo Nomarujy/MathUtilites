@@ -2,7 +2,7 @@
 
 namespace MathUtilites.Geometry
 {
-    public class Rectangle : Figure
+    public class Rectangle : IFigure
     {
         public Rectangle(double widht = 1, double height = 1) : this(widht, height, Vector2D.Zero, 0) { }
 
