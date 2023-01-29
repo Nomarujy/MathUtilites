@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-
-namespace MathUtilites.Geometry
+﻿namespace MathUtilites.Geometry
 {
     public abstract class Figure
     {
