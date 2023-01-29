@@ -25,8 +25,4 @@
     <ProjectReference Include="..\MathUtilites\MathUtilites.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Geometry\" />
-  </ItemGroup>
-
 </Project>
