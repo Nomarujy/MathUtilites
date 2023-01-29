@@ -1,0 +1,7 @@
+﻿Categories (Id, Name …)
+Products (Id, CategoryId?, Name …)
+
+SELECT ”p”.”Name”, “c”.“Name” 
+	FROM “Products” as “p”
+	FULL OUTER JOIN “Categories” as “c” 
+	ON “c”.”Id” == “p”.”Id”
