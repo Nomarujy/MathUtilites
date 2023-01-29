@@ -17,7 +17,7 @@ namespace MathUtilites.Geometry
         public Vector2D Center { get; set; }
 
         private double _width;
-        public double Width
+        public virtual double Width
         {
             get { return _width; }
             set
@@ -28,7 +28,7 @@ namespace MathUtilites.Geometry
         }
 
         private double _height;
-        public double Height
+        public virtual double Height
         { 
             get { return _height; }
             set
