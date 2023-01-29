@@ -2,7 +2,7 @@
 
 namespace MathUtilites.Geometry
 {
-    internal class Rectangle : Figure
+    public class Rectangle : Figure
     {
         public Rectangle(double widht = 1, double height = 1) : this(widht, height, Vector2D.Zero, 0) { }
 
@@ -52,5 +52,20 @@ namespace MathUtilites.Geometry
         public override double Area => Width * Height;
 
         public override double Perimetr => 2 * (Width + Height);
+
+        public Vector2D[] GetCoordinates()
+        {
+            Vector2D[] result = new Vector2D[4];
+            Circle circle = new(Math.Sqrt(Width * Width + Height * Height));
+
+            double angle = 45 + Angle;
+            for (int i = 0; i < 4; i += 45)
+            {
+                result[i] = circle.PointByDegrees(angle);
+
+                angle += 90;
+            }
+            return result;
+        }
     }
 }
