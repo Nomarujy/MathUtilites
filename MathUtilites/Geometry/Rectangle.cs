@@ -49,9 +49,9 @@ namespace MathUtilites.Geometry
             }
         }
 
-        public override double Area => Width * Height;
+        public double Area => Width * Height;
 
-        public override double Perimetr => 2 * (Width + Height);
+        public double Perimetr => 2 * (Width + Height);
 
         public Vector2D[] GetCoordinates()
         {

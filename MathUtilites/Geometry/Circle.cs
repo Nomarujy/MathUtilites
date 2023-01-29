@@ -24,8 +24,8 @@ namespace MathUtilites.Geometry
             Radius = radius;
         }
 
-        public override double Area => Radius * Math.PI * Radius;
-        public override double Perimetr => 2 * Math.PI * Radius;
+        public double Area => Radius * Math.PI * Radius;
+        public double Perimetr => 2 * Math.PI * Radius;
 
         public Vector2D PointByDegrees(double degrees)
         {
