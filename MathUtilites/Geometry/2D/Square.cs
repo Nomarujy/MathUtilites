@@ -19,19 +19,18 @@ namespace MathUtilites.Geometry
             get => base.Height;
             set
             {
-                base.Height = value;
-                base.Width = value;
+                if (value > 0)
+                {
+                    base.Height = value;
+                    base.Width = value;
+                }
             }
         }
 
         public override double Width
         {
             get => base.Width;
-            set
-            {
-                base.Width = value;
-                base.Height = value;
-            }
+            set => Height = value;
         }
     }
 }

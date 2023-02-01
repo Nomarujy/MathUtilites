@@ -119,6 +119,19 @@
             return false;
         }
 
+        public bool Equals(Vector2D vector2D)
+        {
+            return this == vector2D;
+        }
+
+        public bool Equals(Vector2D vector2D, double toolerance)
+        {
+            var differenceX = X - vector2D.X;
+            var differenceY = Y - vector2D.Y;
+
+            return differenceX <= toolerance && differenceY <= toolerance;
+        }
+
         public override int GetHashCode()
         {
             return X.GetHashCode() + Y.GetHashCode();

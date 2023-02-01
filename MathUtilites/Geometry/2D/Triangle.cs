@@ -1,35 +1,71 @@
-﻿namespace MathUtilites.Geometry
+﻿using MathUtilites.Geometry.Entity;
+
+namespace MathUtilites.Geometry
 {
     public class Triangle : IFigure
     {
-        public Triangle(double a = 0, double b = 0, double c = 0)
+        public Triangle(double sideA = 3, double sideB = 4, double sideC = 5)
         {
-            SideA = a;
-            SideB = b;
-            SideC = c;
+            UpdateSides(sideA, sideB, sideC);
         }
 
-        public double SideA = 0;
-        public double SideB = 0;
-        public double SideC = 0;
-
-        public bool IsRightAngled => IsRightAndled();
-
-        private bool IsRightAndled()
+        public Triangle(double sideA, double sideB, double sideC, Vector2D center) : this(sideA, sideB, sideC)
         {
-            var maxSide = Math.Max(SideA, Math.Max(SideB, SideC));
-            var minSide = Math.Min(SideA, Math.Min(SideB, SideC));
-            var avgSide = Math.Max(SideA, Math.Min(SideB, SideC));
+            Center= center;
+        }
+
+        public Vector2D Center { get; set; }
+
+        private double _sideA;
+        private double _sideB;
+        private double _sideC;
+
+        public double SideA => _sideA;
+        public double SideB => _sideB;
+        public double SideC => _sideC;
+
+        public static bool SidesPossible(double sideA, double sideB, double sideC)
+        {
+            if (sideA + sideB > sideC &&
+                sideB + sideC > sideA &&
+                sideC + sideA > sideB)
+            {
+                return true;
+            }
+            return false;
+        }
+
+
+        public void UpdateSides(double sideA, double sideB, double sideC)
+        {
+            if (!SidesPossible(sideA, sideB, sideC))
+            {
+                throw new ArgumentException($"Triangle with sides {sideA} {sideB} {sideC} can`t exist");
+            }
+
+            _sideA = sideA;
+            _sideB = sideB;
+            _sideC = sideC;
+        }
+
+
+        public bool IsRightAngled => IsRightAngledBySides(SideA, SideB, SideC);
+
+        public static bool IsRightAngledBySides(double sideA, double sideB, double sideC)
+        {
+            var maxSide = Math.Max(sideA, Math.Max(sideB, sideC));
+            var minSide = Math.Min(sideA, Math.Min(sideB, sideC));
+            var avgSide = Math.Max(sideA, Math.Min(sideB, sideC));
 
             return Math.Pow(maxSide, 2) == Math.Pow(minSide, 2) + Math.Pow(avgSide, 2);
         }
 
-        public double Area => FindArea();
+        public double Area => FindArea(SideA, SideB, SideC);
 
-        private double FindArea()
+        public static double FindArea(double sideA, double sideB, double sideC)
         {
-            double haldPerimetr = 0.5 * Perimetr;
-            var SqrArea = haldPerimetr * (haldPerimetr - SideA) * (haldPerimetr - SideB) * (haldPerimetr - SideC);
+            double halfPerimetr = 0.5 * (sideA + sideB + sideC);
+            var SqrArea = halfPerimetr * (halfPerimetr - sideA) * (halfPerimetr - sideB) * (halfPerimetr - sideC);
             return Math.Sqrt(SqrArea);
         }
 
