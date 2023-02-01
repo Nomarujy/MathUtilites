@@ -9,6 +9,8 @@ namespace MathUtilites.Noice.NoiceGenerators
 
         private int GenerationInterval { get; set; }
 
+        public NoiceGenerator1D() : this(new NoiceGeneratorOptions()) { }
+
         public NoiceGenerator1D(NoiceGeneratorOptions options)
         {
             _options = options;
@@ -48,7 +50,7 @@ namespace MathUtilites.Noice.NoiceGenerators
 
         private void GenerateInterpolatedValues(double[] noice)
         {
-            for (int i = 0; i < _options.GeneratedCount; i++)
+            for (int i = 0; i < _options.GeneratedCount - 1; i++)
             {
                 InterpolateZone(i, noice);
             }

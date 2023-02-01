@@ -1,6 +1,4 @@
 ﻿using MathUtilites;
-using System.Runtime.Serialization;
-using Xunit;
 
 namespace MathUtilitesTests
 {
@@ -47,11 +45,11 @@ namespace MathUtilitesTests
         public void Percentile_correctResult(decimal percent, decimal expected)
         {
             var result = Statistic.Percentile(PercentileTestData, percent);
-            
+
             Assert.Equal(expected, result);
         }
 
-        private decimal[] PercentileTestData = { 0, 65415, 156, 432635, 345, 1214, 1 };
+        private readonly decimal[] PercentileTestData = { 0, 65415, 156, 432635, 345, 1214, 1 };
 
         public static IEnumerable<object[]> PercetileTestParametors()
         {

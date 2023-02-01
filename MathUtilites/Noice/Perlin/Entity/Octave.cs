@@ -20,12 +20,6 @@
             Noice = noice;
         }
 
-        public Octave(Octave octave)
-        {
-            Noice = null!;
-            octave.Copy(this);
-        }
-
         public double[][][] Noice { get; private set; }
 
         public int Resolution
@@ -40,6 +34,14 @@
         public int XLenght => Noice[0][0].Length;
         public int YLenght => Noice[0].Length;
         public int ZLenght => Noice.Length;
+
+        public Octave Copy()
+        {
+            Octave result = new(Array.Empty<double>());
+            Copy(result);
+
+            return result;
+        }
 
         public void Copy(Octave Destination)
         {
@@ -73,92 +75,71 @@
                 smaller = right;
             }
 
-            var result = AverageForZDimension(smaller.Noice, biger.Noice);
+            var result = ActionFor3D(smaller.Noice, biger.Noice, (x, y) => x + y);
 
             return new(result);
         }
 
-        private static double[][][] AverageForZDimension(double[][][] smaller, double[][][] biger)
+        public static Octave operator / (Octave octave, double value)
         {
-            var BigElementsPerSmall = biger.Length / smaller.Length;
-
-            var result = new double[biger.Length][][];
-
-            for (int z = 0; z < smaller.Length; z++)
+            var result = octave.Copy();
+            for (int z = 0; z < octave.Noice.Length; z++)
             {
-                for (int Z = z * BigElementsPerSmall; Z < (z + 1) * BigElementsPerSmall; Z++)
+                for (int y = 0; y < octave.Noice[0].Length; y++)
                 {
-                    var ySmallDimension = smaller[z];
-                    var yBigDimension = biger[Z];
-
-                    result[Z] = AverageForYDimension(ySmallDimension, yBigDimension);
+                    for (int x = 0; x < octave.Noice[0][0].Length; x++)
+                    {
+                        result.Noice[z][y][x] /= value;
+                    }
                 }
             }
-
-            var lastOctaveValue = smaller[^1];
-
-            for (int z = smaller.Length * BigElementsPerSmall; z < biger.Length; z++)
-            {
-                var bigOctaveValue = biger[z];
-
-                result[z] = AverageForYDimension(lastOctaveValue, bigOctaveValue);
-            }
-
             return result;
         }
 
-        private static double[][] AverageForYDimension(double[][] smaller, double[][] biger)
+        public static Octave operator /(Octave left, Octave right)
         {
-            var BigElementsPerSmall = biger.Length / smaller.Length;
-
-            var result = new double[biger.Length][];
-
-            Parallel.For(0, smaller.Length, (y) =>
-            {
-                for (int Y = y * BigElementsPerSmall; Y < (y + 1) * BigElementsPerSmall; Y++)
-                {
-                    var xSmallDimesion = smaller[y];
-                    var xBiggerDimesion = biger[Y];
-
-                    result[Y] = AverageForXDimension(xSmallDimesion, xBiggerDimesion);
-                }
-            });
-
-            var lastOctaveValue = smaller[^1];
-
-            for (int y = smaller.Length * BigElementsPerSmall; y < biger.Length; y++)
-            {
-                var bigOctaveValue = biger[y];
-
-                result[y] = AverageForXDimension(lastOctaveValue, bigOctaveValue);
-            }
-
-            return result;
+            var res = ActionFor3D(left.Noice, right.Noice, (x, y) => x / y);
+            return new Octave(res);
         }
 
-        private static double[] AverageForXDimension(double[] smaller, double[] biger)
+        private static double[][][] ActionFor3D(double[][][] smaller, double[][][] bigger, Func<double, double, double> func)
         {
-            var BigElementsPerSmall = biger.Length / smaller.Length;
+            return ActionForDimension(smaller, bigger,
+                (small, big) => ActionFor2D(small, big, func));
+        }
 
-            var result = new double[biger.Length];
+        private static double[][] ActionFor2D(double[][] smaller, double[][] bigger, Func<double, double, double> func)
+        {
+            return ActionForDimension(smaller, bigger,
+                (small, big) => ActionFor1D(small, big, func));
+        }
 
-            for (int x = 0; x < smaller.Length; x++)
+        private static double[] ActionFor1D(double[] smaller, double[] bigger, Func<double, double, double> func)
+        {
+            return ActionForDimension(smaller, bigger,
+                func);
+        }
+
+        public static T[] ActionForDimension<T>(T[] smaller, T[] bigger, Func<T, T, T> action)
+        {
+            var bigElementsPerSmall = bigger.Length / smaller.Length;
+            var result = new T[bigger.Length];
+
+            for (int smallIndex = 0; smallIndex < smaller.Length; smallIndex++)
             {
-                var smallOctaveValue = smaller[x];
-                for (int X = x * BigElementsPerSmall; X < (x + 1) * BigElementsPerSmall; X++)
+                var smallOctaveValue = smaller[smallIndex];
+                var lastBigArrayIndex = (smallIndex + 1) * bigElementsPerSmall;
+                for (int bigIndex = smallIndex * bigElementsPerSmall; bigIndex < lastBigArrayIndex; bigIndex++)
                 {
-                    var bigOctaveValue = biger[X];
-                    result[X] = Statistic.Average(smallOctaveValue, bigOctaveValue);
+                    var bigOctaveValue = bigger[bigIndex];
+                    result[bigIndex] = action.Invoke(smallOctaveValue, bigOctaveValue);
                 }
             }
 
-            var lastOctaveValue = smaller[^1];
-
-            for (int x = smaller.Length * BigElementsPerSmall; x < biger.Length; x++)
+            // Must be cause BigElementsPerSmall is Int and maybe (bigElementsPerSmall * smaller.Lenght) < bigger.Lenght
+            for (int i = bigElementsPerSmall * smaller.Length; i < bigger.Length; i++)
             {
-                var bigOctaveValue = biger[x];
-
-                result[x] = Statistic.Average(lastOctaveValue, bigOctaveValue);
+                result[i] = action.Invoke(smaller[^1], bigger[i]);
             }
 
             return result;

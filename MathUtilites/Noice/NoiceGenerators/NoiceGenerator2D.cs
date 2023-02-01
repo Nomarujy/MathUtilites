@@ -10,6 +10,8 @@ namespace MathUtilites.Noice.NoiceGenerators
 
         private int GenerationInterval { get; set; }
 
+        public NoiceGenerator2D() : this(new NoiceGeneratorOptions()) { }
+
         public NoiceGenerator2D(NoiceGeneratorOptions options)
         {
             _options = options;

@@ -5,7 +5,7 @@ VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MathUtilites", "MathUtilites\MathUtilites.csproj", "{BD38AAF5-67B1-4755-BF2F-E079C1F9A70D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MathUtilitesTests", "MathUtilitesTests\MathUtilitesTests.csproj", "{023AB2CD-F6F6-4848-92A0-3C5E16829DD8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MathUtilitesTests", "MathUtilitesTests\MathUtilitesTests.csproj", "{023AB2CD-F6F6-4848-92A0-3C5E16829DD8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

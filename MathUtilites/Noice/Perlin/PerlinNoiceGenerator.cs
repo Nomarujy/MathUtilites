@@ -37,7 +37,7 @@ namespace MathUtilites.Noice.Perlin
 
                 Octave lastOctave = generator.Invoke();
 
-                result += lastOctave;
+                result = (result + lastOctave) / 2f;
             }
             return result;
         }
@@ -47,7 +47,7 @@ namespace MathUtilites.Noice.Perlin
             NoiceGenerator1D generator = new(NoiceGeneratorOptions);
 
             return GenerateOctave(seed,
-                (seed) => generator.Generate(seed)).Noice[0][0];
+                generator.Generate).Noice[0][0];
         }
 
         public double[] Generate1DParalel(int seed)
@@ -55,7 +55,7 @@ namespace MathUtilites.Noice.Perlin
             NoiceGenerator1D generator = new(NoiceGeneratorOptions);
 
             return GenerateOctave(seed,
-                (seed) => generator.GenerateParalel(seed)).Noice[0][0];
+                generator.GenerateParalel).Noice[0][0];
         }
 
         public double[][] Generate2D(int seed)
@@ -63,7 +63,7 @@ namespace MathUtilites.Noice.Perlin
             NoiceGenerator2D generator = new(NoiceGeneratorOptions);
 
             return GenerateOctave(seed, 
-                (seed) => generator.Generate(seed))
+                generator.Generate)
                 .Noice[0];
         }
 
@@ -72,7 +72,7 @@ namespace MathUtilites.Noice.Perlin
             NoiceGenerator2D generator = new(NoiceGeneratorOptions);
 
             return GenerateOctave(seed,
-                (seed) => generator.GenerateParalel(seed))
+                generator.GenerateParalel)
                 .Noice[0];
         }
 
@@ -81,7 +81,7 @@ namespace MathUtilites.Noice.Perlin
             NoiceGenerator3D generator = new(NoiceGeneratorOptions);
 
             return GenerateOctave(seed,
-                (seed) => generator.Generate(seed))
+                generator.Generate)
                 .Noice;
         }
 
@@ -90,7 +90,7 @@ namespace MathUtilites.Noice.Perlin
             NoiceGenerator3D generator = new(NoiceGeneratorOptions);
 
             return GenerateOctave(seed,
-                (seed) => generator.GenerateParalel(seed))
+                generator.GenerateParalel)
                 .Noice;
         }
 
