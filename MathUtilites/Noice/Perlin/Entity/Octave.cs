@@ -122,24 +122,18 @@
 
         public static T[] ActionForDimension<T>(T[] smaller, T[] bigger, Func<T, T, T> action)
         {
-            var bigElementsPerSmall = bigger.Length / smaller.Length;
+            var bigElementsPerSmall = (double)bigger.Length / smaller.Length;
             var result = new T[bigger.Length];
 
             for (int smallIndex = 0; smallIndex < smaller.Length; smallIndex++)
             {
                 var smallOctaveValue = smaller[smallIndex];
                 var lastBigArrayIndex = (smallIndex + 1) * bigElementsPerSmall;
-                for (int bigIndex = smallIndex * bigElementsPerSmall; bigIndex < lastBigArrayIndex; bigIndex++)
+                for (int bigIndex = (int)(smallIndex * bigElementsPerSmall); bigIndex < lastBigArrayIndex; bigIndex++)
                 {
                     var bigOctaveValue = bigger[bigIndex];
                     result[bigIndex] = action.Invoke(smallOctaveValue, bigOctaveValue);
                 }
-            }
-
-            // Must be cause BigElementsPerSmall is Int and maybe (bigElementsPerSmall * smaller.Lenght) < bigger.Lenght
-            for (int i = bigElementsPerSmall * smaller.Length; i < bigger.Length; i++)
-            {
-                result[i] = action.Invoke(smaller[^1], bigger[i]);
             }
 
             return result;
