@@ -70,7 +70,7 @@ namespace MathUtilites.Geometry
             circle.Radius /= 2;
 
             double angle = 45 + Angle;
-            for (int i = 0; i < 4; i += 45)
+            for (int i = 0; i < 4; i += 1)
             {
                 result[i] = circle.PointByDegrees(angle);
 
