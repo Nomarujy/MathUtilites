@@ -16,36 +16,45 @@ namespace MathUtilites.Geometry
 
         public Vector2D Center { get; set; }
 
-        private double _width;
+        private double _width = 1;
         public virtual double Width
         {
             get { return _width; }
             set
             {
-                _width = Math.Abs(value);
+                if (value > 0)
+                {
+                    _width = value;
+                }
             }
 
         }
 
-        private double _height;
+        private double _height = 1;
         public virtual double Height
         { 
             get { return _height; }
             set
             {
-                _height = Math.Abs(value);
+                if (value > 0)
+                {
+                    _height = value;
+                }
             }
         
         }
 
-        private double _angle;
+        private double _angle = 0;
 
         public double Angle
         {
             get { return _angle; }
             set
             {
-                _angle = Math.Abs(value) % 360;
+                if (value >= 0)
+                {
+                    _angle = value % 360;
+                }
             }
         }
 
@@ -58,8 +67,7 @@ namespace MathUtilites.Geometry
             Vector2D[] result = new Vector2D[4];
             Circle circle = new(Math.Sqrt(Width * Width + Height * Height));
 
-            circle.Radius = circle.Radius / 2;
-
+            circle.Radius /= 2;
 
             double angle = 45 + Angle;
             for (int i = 0; i < 4; i += 45)
